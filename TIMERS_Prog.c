@@ -1,0 +1,90 @@
+/*
+ * TIMERS_Prog.c
+ *
+ * Created: 2/15/2023 2:40:28 PM
+ *  Author: HP2023
+ */ 
+
+#include "TIMERS_Interface.h"
+
+void Timer0_Stop(){
+	
+	CLR_BIT(TCCR0,CS00);
+	CLR_BIT(TCCR0,CS01);
+	CLR_BIT(TCCR0,CS02);
+	
+}
+
+void Timer0_INIT(){
+	SET_BIT(SREG,7);//GIE
+	
+	SET_BIT(TIMSK,TOIE0);	//PIF of OVER FLOW MODE
+	SET_BIT(TIMSK,OCIE0);	//PIF of COMP MATCH MODE
+	
+	#if (TIMER0_MODE==NORMAL_MODE)
+	SET_BIT(TIMSK,TOIE0);	//PIF of OVER FLOW MODE
+	CLR_BIT(TCCR0,WGM00);
+	CLR_BIT(TCCR0,WGM01);
+
+	#elif (TIMER0_MODE== PWM_PHASE_CORRECT)
+	SET_BIT(TIMSK,TOIE0);	//PIF of OVER FLOW MODE
+	SET_BIT(TIMSK,OCIE0);	//PIF of COMP MATCH MODE
+	SET_BIT(TCCR0,WGM00);
+	CLR_BIT(TCCR0,WGM01);
+	#elif (TIMER0_MODE== CTC_MODE  )
+	SET_BIT(TIMSK,OCIE0);	//PIF of COMP MATCH MODE
+	CLR_BIT(TCCR0,WGM00);
+	SET_BIT(TCCR0,WGM01);
+	
+	#elif (TIMER0_MODE== PWM_FAST_MODE  )
+	SET_BIT(TIMSK,TOIE0);	//PIF of OVER FLOW MODE
+	SET_BIT(TIMSK,OCIE0);	//PIF of COMP MATCH MODE
+	SET_BIT(TCCR0,WGM00);
+	SET_BIT(TCCR0,WGM01);
+	#endif
+	
+}
+
+
+
+void Timer0_Start(){
+	
+	switch(TIMER0_FREQ){
+		
+		case PRE_1024: {
+			SET_BIT(TCCR0,CS00);
+			CLR_BIT(TCCR0,CS01);
+			SET_BIT(TCCR0,CS02);
+		} break;
+		case PRE_256: {
+			CLR_BIT(TCCR0,CS00);
+			CLR_BIT(TCCR0,CS01);
+			SET_BIT(TCCR0,CS02);
+		} break;
+		
+		
+		case PRE_64: {
+			SET_BIT(TCCR0,CS00);
+			SET_BIT(TCCR0,CS01);
+			CLR_BIT(TCCR0,CS02);
+		} break;
+		
+		
+		case PRE_8: {
+			
+			CLR_BIT(TCCR0,CS00);
+			SET_BIT(TCCR0,CS01);
+			CLR_BIT(TCCR0,CS02);
+		} break;
+		
+		
+		case PRE_1: {
+			
+			SET_BIT(TCCR0,CS00);
+			CLR_BIT(TCCR0,CS01);
+			CLR_BIT(TCCR0,CS02);
+		} break;
+		
+		
+	}
+}
